@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' file: data:">
+  <title>DeskPet</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="stage">
+    <div id="talk">
+      <input id="chat" class="hit" type="text" placeholder="모찌에게 말 걸거나 일 시키기…" hidden>
+      <div id="thinking" class="hit" hidden>…</div>
+      <div id="ask" class="hit" hidden>
+        <div id="ask-text"></div>
+        <div class="buttons">
+          <button id="yes" type="button">해줘</button>
+          <button id="no" type="button">하지 마</button>
+        </div>
+        <div class="buttons more">
+          <button id="always" type="button">항상 허용</button>
+          <button id="all" type="button">이번 일은 다 맡길게</button>
+        </div>
+      </div>
+      <div id="bubble" class="hit" hidden></div>
+      <div id="working" class="hit" hidden></div>
+    </div>
+    <div id="pet" class="hit">
+      <div id="bob">
+        <div id="actor">
+          <img id="skin" alt="" hidden>
+          <svg id="creature" viewBox="0 0 100 100" width="100" height="100" hidden></svg>
+        </div>
+        <div id="mark" hidden></div>
+      </div>
+    </div>
+  </div>
+  <script src="../dist/renderer/actor.js"></script>
+  <script src="../dist/renderer/renderer.js"></script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+:root {
+  --bg: #f6f4f1; --surface: #fff; --surface-2: #faf9f7; --border: #e7e3de; --border-strong: #d6d0c9;
+  --text: #24201d; --text-2: #6f6862; --text-3: #9b948d; --accent: #f0587c; --accent-soft: #ffe8ee; --accent-text: #c93a5e;
+  --font: ui-rounded, "SF Pro Rounded", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1b1a; --surface: #262422; --surface-2: #2d2b28; --border: #3a3734; --border-strong: #4a4642;
+    --text: #f2eeea; --text-2: #b3aca5; --text-3: #857e77; --accent: #ff7395; --accent-soft: #46262f; --accent-text: #ff9db4;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font: 14px/1.5 var(--font); -webkit-font-smoothing: antialiased; }
+body { display: flex; flex-direction: column; }
+.head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--surface); }
+.who { display: flex; align-items: center; gap: 8px; font-weight: 800; }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.dot.busy { animation: pulse 1s ease-in-out infinite alternate; }
+@keyframes pulse { from { opacity: 0.35; } to { opacity: 1; } }
+.usage { color: var(--text-3); font-size: 12px; white-space: nowrap; }
+.log { flex: 1; overflow-y: auto; padding: 14px 14px 6px; display: flex; flex-direction: column; gap: 8px; }
+.log:empty::before { content: "아직 대화가 없어요. 아래에서 말을 걸어보세요."; color: var(--text-3); font-size: 13px; text-align: center; margin-top: 40px; }
+.msg { max-width: 85%; padding: 8px 12px; border-radius: 14px; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.5; user-select: text; }
+.msg.me { align-self: flex-end; background: var(--accent); color: #fff; border-bottom-right-radius: 4px; }
+.msg.pet { align-self: flex-start; background: var(--surface); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+.msg .ai { display: block; margin-top: 4px; padding-top: 4px; border-top: 1px dashed var(--border); color: var(--text-2); font-size: 12.5px; }
+.time { align-self: center; color: var(--text-3); font-size: 11px; }
+.form { display: flex; gap: 8px; padding: 10px 12px 12px; border-top: 1px solid var(--border); background: var(--surface); }
+.form textarea { flex: 1; resize: none; max-height: 120px; padding: 8px 12px; border: 1px solid var(--border-strong); border-radius: 12px; background: var(--surface); color: var(--text); font: inherit; outline: none; }
+.form textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.form button { padding: 0 16px; border: none; border-radius: 12px; background: var(--accent); color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+.form button:disabled { opacity: 0.5; cursor: default; }

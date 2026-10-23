@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' file: data:">
+  <title>DeskPet 스튜디오</title>
+  <link rel="stylesheet" href="studio.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-dot"></span>DeskPet 스튜디오</div>
+    <div class="title">
+      <span id="title-name">…</span>
+      <span id="title-active" class="badge" hidden>펫으로 쓰는 중</span>
+    </div>
+    <div class="top-actions">
+      <span id="save-status" class="save-status">불러오는 중…</span>
+      <button id="use-btn" class="btn primary" type="button">이 캐릭터를 펫으로 쓰기</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- 캐릭터 목록 -->
+    <aside class="sidebar">
+      <div class="side-head">
+        <span class="side-title">캐릭터</span>
+        <button id="new-btn" class="btn small" type="button">+ 새로 만들기</button>
+      </div>
+      <ul id="char-list" class="char-list"></ul>
+      <div class="side-foot">
+        <button id="dup-btn" class="btn ghost small" type="button">복제</button>
+        <button id="folder-btn" class="btn ghost small" type="button">폴더 열기</button>
+        <button id="del-btn" class="btn ghost small danger" type="button">삭제</button>
+      </div>
+    </aside>
+
+    <!-- 편집 -->
+    <section class="editor">
+      <nav class="tabs" role="tablist">
+        <button class="tab" data-tab="basic" role="tab" type="button">기본</button>
+        <button class="tab" data-tab="speech" role="tab" type="button">의사소통</button>
+        <button class="tab" data-tab="moods" role="tab" type="button">감정 표현</button>
+        <button class="tab" data-tab="behavior" role="tab" type="button">행동</button>
+        <button class="tab" data-tab="reactions" role="tab" type="button">반응</button>
+        <button class="tab" data-tab="rules" role="tab" type="button">규칙</button>
+        <button class="tab" data-tab="skills" role="tab" type="button">스킬</button>
+      </nav>
+
+      <div class="panel" data-panel="basic">
+        <div class="section">
+          <h2>이름</h2>
+          <p class="hint">말풍선과 대화에서 쓰는 이름이에요.</p>
+          <input id="f-name" class="input" type="text" maxlength="40">
+        </div>
+        <div class="section">
+          <h2>크기</h2>
+          <p class="hint">바탕화면에 보이는 캐릭터 크기예요.</p>
+          <div class="range-row">
+            <input id="f-size" type="range" min="60" max="200" step="5">
+            <span id="f-size-value" class="range-value"></span>
+          </div>
+        </div>
+        <div class="section">
+          <h2>이미지와 애니메이션</h2>
+          <p class="hint">배경이 투명한 PNG나 움직이는 GIF를 추천해요. <b>여러 장</b>을 넣으면 파일 이름 순서대로 넘기는 애니메이션이 돼요. 하나도 없으면 기본 찹쌀떡 친구가 나와요.</p>
+          <div class="slot-row">
+            <div class="slot" data-slot="default"></div>
+            <div class="slot" data-slot="blink"></div>
+          </div>
+          <p class="hint slot-note">기본: 감정별 이미지가 없을 때 · 눈 감은 모습: 가끔 깜빡일 때 (한 장짜리 이미지일 때만). 걷기·구경하기·빼꼼 이미지는 행동 탭에 있어요.</p>
+        </div>
+      </div>
+
+      <div class="panel" data-panel="speech">
+        <div class="section">
+          <h2>말하는 방식</h2>
+          <div class="cards" id="f-mode">
+            <button class="card-option" data-value="free" type="button">
+              <span class="card-title">자유롭게 말하기</span>
+              <span class="card-desc">AI가 성격과 말투대로 그때그때 문장을 만들어요. 감정별 대사는 말투 예시로 쓰여요.</span>
+            </button>
+            <button class="card-option" data-value="lines" type="button">
+              <span class="card-title">정해진 대사만</span>
+              <span class="card-desc">감정별 대사 목록에서만 골라 말해요. 의성어 캐릭터에 딱이에요. AI는 상황에 맞는 감정만 골라요.</span>
+            </button>
+          </div>
+        </div>
+        <div class="section" data-free-only>
+          <h2>말투</h2>
+          <div class="segmented" id="f-politeness">
+            <button data-value="auto" type="button">성격 설명대로</button>
+            <button data-value="banmal" type="button">반말</button>
+            <button data-value="jondaet" type="button">존댓말</button>
+          </div>
+        </div>
+        <div class="section" data-free-only>
+          <h2>말 길이</h2>
+          <div class="segmented" id="f-length">
+            <button data-value="short" type="button">한마디</button>
+            <button data-value="normal" type="button">짧게</button>
+            <button data-value="long" type="button">조금 길게</button>
+          </div>
+        </div>
+        <div class="section" data-free-only>
+          <h2>말버릇</h2>
+          <p class="hint">예: 말끝을 "…!"로 흐려. 놀라면 "히잉" 해.</p>
+          <input id="f-habits" class="input" type="text" maxlength="300">
+        </div>
+        <div class="section">
+          <h2>성격</h2>
+          <p class="hint">어떤 친구인지 자유롭게 써주세요. 사용자가 일할 때·딴짓할 때 어떻게 반응하는지, 좋아하는 것 등. 정해진 대사 방식에서도 AI가 감정을 고를 때 참고해요.</p>
+          <textarea id="f-personality" class="input textarea" rows="12" spellcheck="false"></textarea>
+        </div>
+      </div>
+
+      <div class="panel" data-panel="moods">
+        <div class="section weights-section">
+          <h2>평상시 기분</h2>
+          <p class="hint">조용히 있을 때 25~60초마다 이 비율대로 기분이 바뀌어요. AI가 감정을 고를 때도 이 성향을 참고해요. 0이면 평소엔 안 나오고, 상황에 맞을 때만 나와요.</p>
+          <div id="w-bar" class="w-bar"></div>
+          <div id="w-list" class="w-list"></div>
+        </div>
+        <div class="mood-layout">
+          <ul id="mood-list" class="mood-list"></ul>
+          <div class="mood-editor">
+            <div class="mood-head">
+              <div>
+                <h2 id="m-title"></h2>
+                <p id="m-sub" class="hint"></p>
+              </div>
+              <label class="switch">
+                <input id="m-enabled" type="checkbox">
+                <span class="switch-track"></span>
+                <span class="switch-label">사용</span>
+              </label>
+            </div>
+            <div class="section">
+              <h3>이미지</h3>
+              <p class="hint">없으면 기본 이미지를 써요. 한 장으로도 움직임과 효과로 감정이 표현돼요.</p>
+              <div class="slot-row"><div class="slot" id="m-slot"></div></div>
+            </div>
+            <div class="section">
+              <h3>움직임</h3>
+              <div id="m-motion" class="chips"></div>
+            </div>
+            <div class="section">
+              <h3>효과</h3>
+              <div class="effect-row">
+                <input id="m-effect" class="input effect-input" type="text" maxlength="4" placeholder="없음">
+                <input id="m-color" class="color" type="color">
+                <div id="m-effect-picks" class="chips"></div>
+              </div>
+            </div>
+            <div class="section">
+              <h3>대사 <span id="m-count" class="count"></span></h3>
+              <p id="m-lines-hint" class="hint"></p>
+              <div id="m-lines" class="line-list"></div>
+              <button id="m-add-line" class="btn small line-add" type="button">+ 대사 추가</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel" data-panel="behavior">
+        <div class="section">
+          <label class="toggle-card">
+            <span>
+              <span class="card-title">화면 돌아다니기</span>
+              <span class="card-desc">펫이 화면을 돌아다녀요. 범위와 움직이는 모습은 아래에서 골라요. 마우스를 올리거나 말을 걸 때, 자리를 비웠을 때는 멈춰요.</span>
+            </span>
+            <span class="switch">
+              <input id="b-roam" type="checkbox">
+              <span class="switch-track"></span>
+            </span>
+          </label>
+        </div>
+        <div data-roam-only>
+          <div class="section">
+            <h2>돌아다니는 범위</h2>
+            <div class="cards three" id="b-area">
+              <button class="card-option" data-value="floor" type="button">
+                <span class="card-title">바닥에서만</span>
+                <span class="card-desc">끌어다 놓은 높이에서 좌우로만 다녀요.</span>
+              </button>
+              <button class="card-option" data-value="screen" type="button">
+                <span class="card-title">화면 전체</span>
+                <span class="card-desc">지금 화면 위아래 어디든 다녀요. 위쪽에선 말풍선이 아래에 떠요.</span>
+              </button>
+              <button class="card-option" data-value="all" type="button">
+                <span class="card-title">모든 모니터</span>
+                <span class="card-desc">모니터가 여러 대면 그 사이도 넘어다녀요.</span>
+              </button>
+            </div>
+          </div>
+          <div class="section">
+            <h2>움직이는 모습</h2>
+            <div class="segmented" id="b-gait">
+              <button data-value="walk" type="button">콩콩 걷기</button>
+              <button data-value="float" type="button">둥실둥실 날기</button>
+              <button data-value="hop" type="button">깡총깡총 뛰기</button>
+            </div>
+          </div>
+          <div class="section">
+            <h2>움직이는 속도</h2>
+            <div class="range-row">
+              <input id="b-speed" type="range" min="15" max="240" step="5">
+              <span id="b-speed-value" class="range-value wide"></span>
+            </div>
+          </div>
+          <div class="section">
+            <h2>활동량</h2>
+            <p class="hint">한 번 움직이고 얼마나 쉬었다가 다시 움직일지예요.</p>
+            <div class="segmented" id="b-activity">
+              <button data-value="low" type="button">가끔 (20~45초)</button>
+              <button data-value="normal" type="button">보통 (8~20초)</button>
+              <button data-value="high" type="button">자주 (3~8초)</button>
+            </div>
+          </div>
+          <div class="section">
+            <h2>할 수 있는 행동</h2>
+            <p class="hint">켜둔 행동 중에서 그때그때 골라요. 행동마다 그림을 넣을 수 있어요 (여러 장 = 애니메이션). 비워두면 기본·감정 이미지를 써요.</p>
+            <div class="action-list">
+              <div class="action-card">
+                <label class="check-row">
+                  <input id="b-walk" type="checkbox">
+                  <span><span class="card-title">산책</span><span class="card-desc">아무 데나 걸어가서 쉬어요 (범위 안에서). 걷기 그림은 모서리·빼꼼으로 갈 때도 써요. 없으면 콩콩 뛰며 걸어요.</span></span>
+                </label>
+                <div class="slot-row"><div class="slot" data-slot="walk"></div></div>
+              </div>
+              <div class="action-card">
+                <label class="check-row">
+                  <input id="b-corner" type="checkbox">
+                  <span><span class="card-title">모서리에서 구경하기</span><span class="card-desc">모서리까지 가서 오래 앉아 구경해요. 화면 전체 범위면 위쪽 모서리도 가요.</span></span>
+                </label>
+                <div class="slot-row"><div class="slot" data-slot="watch"></div></div>
+              </div>
+              <div class="action-card">
+                <label class="check-row">
+                  <input id="b-peek" type="checkbox">
+                  <span><span class="card-title">가장자리에서 빼꼼</span><span class="card-desc">화면 밖으로 반쯤 숨어서 쳐다봐요. 말할 땐 다시 나와요. 빼꼼 그림은 <b>오른쪽 끝</b>에서 왼쪽을 보는 그림으로 넣어주세요 (왼쪽 끝에선 자동으로 뒤집어요). "조절"에서 화면 끝에 맞출 수 있어요.</span></span>
+                </label>
+                <div class="rule-detail peek-depth">
+                  <span>화면 밖으로</span>
+                  <input id="b-peek-depth" type="range" min="20" max="80" step="5">
+                  <span id="b-peek-depth-value" class="range-value"></span>
+                  <span>숨기</span>
+                </div>
+                <div class="slot-row"><div class="slot" data-slot="peek"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="section">
+            <h2>어느 쪽 모서리</h2>
+            <p class="hint">구경하기와 빼꼼을 할 쪽이에요.</p>
+            <div class="segmented" id="b-side">
+              <button data-value="right" type="button">오른쪽</button>
+              <button data-value="left" type="button">왼쪽</button>
+              <button data-value="both" type="button">양쪽</button>
+            </div>
+          </div>
+        </div>
+        <div class="section">
+          <h2>그림이 보는 방향</h2>
+          <p class="hint">걸을 때 걷는 방향을 보도록 좌우를 뒤집어요. 정면을 보는 그림이면 뒤집지 않아요.</p>
+          <div class="segmented" id="b-facing">
+            <button data-value="front" type="button">정면</button>
+            <button data-value="left" type="button">왼쪽을 봄</button>
+            <button data-value="right" type="button">오른쪽을 봄</button>
+          </div>
+        </div>
+      </div>
+      <div class="panel" data-panel="rules">
+        <div class="section wide">
+          <h2>규칙 <span class="count">rules.md</span></h2>
+          <p class="hint">캐릭터가 <b>항상</b> 따르는 규칙이에요. 말하는 법, 상황에 반응하는 법, 일 부탁을 받았을 때 행동 등을 마크다운으로 자유롭게 써요. 감정 태그처럼 앱이 대답을 읽는 데 필요한 약속은 앱이 따로 넣으니 신경 안 써도 돼요.</p>
+          <textarea id="f-rules" class="input textarea code" rows="24" spellcheck="false"></textarea>
+          <div class="row-actions">
+            <button id="rules-reset" class="btn small" type="button">기본 규칙으로 되돌리기</button>
+            <span class="hint" id="rules-path"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" data-panel="skills">
+        <div class="section wide">
+          <h2>스킬</h2>
+          <p class="hint">이 캐릭터만 쓰는 Claude Code 스킬이에요. 평소엔 이름과 설명만 보고 있다가, 필요할 때 골라서 내용을 읽고 따라 해요. (예: "토익 단어 퀴즈 내기", "하루 일정 정리") 평소 쓰던 내 스킬도 그대로 쓸 수 있어요. <b>Claude Code를 쓸 때만</b> 적용돼요.</p>
+          <div class="skills-layout">
+            <div>
+              <ul id="skill-list" class="mood-list skill-list"></ul>
+              <button id="skill-new" class="btn small skill-new" type="button">+ 새 스킬</button>
+            </div>
+            <div class="skill-editor" id="skill-editor">
+              <label class="field"><span>이름 <span class="count">영문 소문자, 숫자, - (예: toeic-quiz)</span></span>
+                <input id="sk-name" class="input" type="text" maxlength="41" spellcheck="false"></label>
+              <label class="field"><span>언제 쓰는지 <span class="count">이걸 보고 필요할 때 골라요</span></span>
+                <textarea id="sk-desc" class="input textarea short" rows="2" maxlength="500" placeholder="예: 사용자가 토익 공부를 도와달라거나 단어 퀴즈를 내달라고 할 때"></textarea></label>
+              <label class="field"><span>내용 <span class="count">어떻게 할지 (마크다운)</span></span>
+                <textarea id="sk-body" class="input textarea code" rows="14" spellcheck="false" placeholder="예:&#10;1. 토익 빈출 단어를 5개 골라 하나씩 뜻을 물어봐.&#10;2. 맞히면 캐릭터 말투로 칭찬하고, 틀리면 힌트를 줘.&#10;3. 끝나면 점수를 알려줘."></textarea></label>
+              <div class="row-actions">
+                <button id="sk-save" class="btn primary small" type="button">저장</button>
+                <button id="sk-delete" class="btn ghost small danger" type="button">삭제</button>
+                <button id="sk-folder" class="btn ghost small" type="button">스킬 폴더 열기</button>
+                <span class="hint" id="sk-status"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" data-panel="reactions">
+        <div class="section">
+          <h2>언제 반응할까</h2>
+          <p class="hint">펫이 먼저 말을 거는 때예요. 기본은 <b>아래 써둔 대사 중 하나</b>로 말해서 AI 사용량을 안 써요. 반응마다 "AI로 말하기"를 켜면 그 반응만 AI가 그때그때 말해요. 정해진 대사 캐릭터(의성어로만 말하는 캐릭터 등)는 대사 대신 감정별 소리로 말해요.</p>
+          <div id="r-list" class="action-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 미리보기 -->
+    <aside class="preview">
+      <div class="preview-head">
+        <span class="side-title">미리보기</span>
+        <span class="hint">저장하지 않아도 바로 보여요</span>
+      </div>
+      <div class="stage">
+        <div id="p-edge" class="stage-edge" hidden><span>화면 끝</span></div>
+        <div class="stage-talk"><div id="p-bubble" class="p-bubble"></div></div>
+        <div id="p-pet" class="p-pet">
+          <div class="p-actor">
+            <img id="p-skin" alt="" hidden>
+            <svg id="p-creature" viewBox="0 0 100 100" hidden></svg>
+          </div>
+          <div id="p-mark" class="p-mark" hidden></div>
+        </div>
+        <div id="p-name" class="p-name"></div>
+      </div>
+      <div class="preview-moods" id="p-moods"></div>
+      <button id="p-on-pet" class="btn" type="button">바탕화면 펫에서 보기</button>
+      <p id="p-on-pet-hint" class="hint center"></p>
+
+      <div class="test">
+        <div class="preview-head">
+          <span class="side-title">대화 테스트</span>
+          <button id="t-clear" class="btn ghost small" type="button">지우기</button>
+        </div>
+        <p class="hint">저장 전 성격·말투로 대답해요. 펫의 실제 대화 기억에는 안 남아요.</p>
+        <div id="t-log" class="t-log"></div>
+        <div id="t-situations" class="chips t-situations"></div>
+        <form id="t-form" class="t-form">
+          <input id="t-input" class="input" type="text" maxlength="500" placeholder="말 걸어보기…" autocomplete="off">
+          <button id="t-send" class="btn primary" type="submit">보내기</button>
+        </form>
+      </div>
+    </aside>
+  </main>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="../dist/renderer/actor.js"></script>
+  <script src="../dist/renderer/studio.js"></script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+{
+  "name": "deskpet",
+  "version": "0.2.0",
+  "private": true,
+  "description": "화면 구석에서 지금 쓰는 앱을 지켜보고 성격대로 반응하는 데스크톱 펫",
+  "main": "dist/main/main.js",
+  "scripts": {
+    "build": "tsc -p .",
+    "start": "npm run build && electron .",
+    "typecheck": "tsc -p . --noEmit",
+    "dist": "npm run build && electron-builder --mac dir"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "electron": "^45.0.0",
+    "electron-builder": "^26.15.3",
+    "typescript": "^7.0.2"
+  },
+  "build": {
+    "appId": "com.sean.deskpet",
+    "productName": "DeskPet",
+    "directories": {
+      "output": "out"
+    },
+    "files": [
+      "dist/**",
+      "renderer/**",
+      "package.json"
+    ],
+    "mac": {
+      "target": "dir",
+      "category": "public.app-category.entertainment",
+      "identity": null,
+      "extendInfo": {
+        "LSUIElement": true
+      }
+    },
+    "win": {
+      "target": "nsis"
+    }
+  }
+}

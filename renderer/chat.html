@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'">
+  <title>대화</title>
+  <link rel="stylesheet" href="chat.css">
+</head>
+<body>
+  <header class="head">
+    <div class="who"><span class="dot"></span><span id="name">…</span></div>
+    <div id="usage" class="usage"></div>
+  </header>
+  <main id="log" class="log"></main>
+  <form id="form" class="form">
+    <textarea id="input" rows="1" placeholder="말 걸기·일 시키기… (Enter 보내기, Shift+Enter 줄바꿈)"></textarea>
+    <button id="send" type="submit">보내기</button>
+  </form>
+  <script src="../dist/renderer/chatwin.js"></script>
+</body>
+</html>

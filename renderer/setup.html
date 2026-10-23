@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:">
+  <title>DeskPet AI 설정</title>
+  <link rel="stylesheet" href="setup.css">
+</head>
+<body>
+  <header class="head">
+    <div class="head-row">
+      <div class="brand"><span class="dot"></span><span id="title">DeskPet 시작하기</span></div>
+      <nav class="tabs" role="tablist">
+        <button class="tab" data-view="settings" role="tab" type="button">설정</button>
+        <button class="tab" data-view="guide" role="tab" type="button">사용 가이드</button>
+      </nav>
+    </div>
+    <p class="sub" data-only="settings">펫이 대화하고 일할 때 쓸 AI를 하나 골라주세요. 이 컴퓨터에 로그인된 구독으로 돌아요 (API 키 필요 없음).</p>
+  </header>
+
+  <main data-view-panel="settings">
+    <section class="engines" role="radiogroup">
+      <article class="engine" data-engine="claude" tabindex="0" role="radio">
+        <div class="engine-head">
+          <span class="engine-name"><span class="radio"></span>Claude Code</span>
+          <span class="status" data-status></span>
+        </div>
+        <p class="engine-desc">Anthropic. 평소 쓰던 Claude Code에 그대로 연결해요 (스킬·플러그인·MCP·권한 설정 그대로). 설정에 없는 권한은 말풍선으로 물어봐요.</p>
+        <label class="option" data-for="claude">모델
+          <select id="claude-model">
+            <option value="sonnet">Sonnet (추천 · 대화와 일 둘 다)</option>
+            <option value="haiku">Haiku (가장 빠름 · 일은 약함)</option>
+            <option value="opus">Opus (가장 똑똑함 · 느림)</option>
+            <option value="default">Claude Code 기본 설정</option>
+          </select>
+        </label>
+        <div class="engine-actions">
+          <button class="btn small" data-act="test" type="button">연결 테스트</button>
+          <button class="btn small ghost" data-act="login" type="button">로그인하기</button>
+          <span class="test-result" data-result></span>
+        </div>
+      </article>
+      <article class="engine" data-engine="codex" tabindex="0" role="radio">
+        <div class="engine-head">
+          <span class="engine-name"><span class="radio"></span>Codex</span>
+          <span class="status" data-status></span>
+        </div>
+        <p class="engine-desc">OpenAI. 평소 쓰던 Codex에 그대로 연결해요 (ChatGPT 계정). 실행 중엔 하나하나 물어볼 수 없어서 아래 권한 안에서 일해요.</p>
+        <label class="option" data-for="codex">권한
+          <select id="codex-sandbox">
+            <option value="workspace-write">작업 폴더 안에서 고치기까지</option>
+            <option value="read-only">읽기만 (고치지 않음)</option>
+          </select>
+        </label>
+        <div class="engine-actions">
+          <button class="btn small" data-act="test" type="button">연결 테스트</button>
+          <button class="btn small ghost" data-act="login" type="button">로그인하기</button>
+          <span class="test-result" data-result></span>
+        </div>
+      </article>
+    </section>
+
+    <p id="warn" class="warn" hidden></p>
+
+    <section class="allow">
+      <div class="row-title">항상 허용한 동작 <span class="row-desc">말풍선에서 [항상 허용]을 누른 것들이에요. 펫에게만 적용되고, 평소 Claude Code 권한 설정은 안 바뀌어요.</span></div>
+      <ul id="allow-list" class="allow-list"></ul>
+    </section>
+  </main>
+
+  <footer class="foot" data-view-panel="settings">
+    <span class="hint">나중에 캐릭터 우클릭 → "AI 설정"에서 바꿀 수 있어요</span>
+    <button id="save" class="btn primary" type="button">시작하기</button>
+  </footer>
+
+
+  <main class="guide" data-view-panel="guide" hidden>
+    <div class="now" id="now"></div>
+
+    <h2>한눈에 보기</h2>
+    <div class="flow">
+      <div class="flow-step"><b>펫</b><span>내가 건 말, 지금 쓰는 앱, 사용 시간</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><b>내 Claude Code / Codex</b><span>평소 쓰던 그대로 + 캐릭터 성격</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><b>펫 화면</b><span>말풍선, 표정·움직임, 진행 상황</span></div>
+    </div>
+    <p>DeskPet은 따로 AI를 갖고 있지 않아요. 이 컴퓨터에 설치·로그인된 <b>Claude Code</b>나 <b>Codex</b>에 그대로 연결해서, 캐릭터 성격만 덧붙여 써요. 그래서 평소 쓰던 <b>스킬, 플러그인, MCP, 권한 설정</b>이 그대로 따라오고, API 키 없이 내 구독(Claude 구독 / ChatGPT 계정)으로 돌아요. 내 컴퓨터에서 나만 쓰는 용도예요.</p>
+
+    <h2>대화도 일도 한 세션에서</h2>
+    <ul>
+      <li><b>입력창 여는 법:</b> 캐릭터를 누르거나, 어느 앱에서든 <code>⌥ Option + ⇧ Shift + Space</code>를 누르세요. 한 번 더 누르면 닫혀요. (<code>config.json</code>의 <code>chat_hotkey</code>로 바꿀 수 있어요)</li>
+      <li><b>그냥 말하면 돼요:</b> "안녕"이든 "다운로드 폴더 정리해줘"든 같은 입력창에 말하면, AI가 대화면 대답하고 일이면 도구를 써서 직접 해요.</li>
+      <li><b>캐릭터 성격:</b> 스튜디오에서 정한 성격, 말투, 감정별 대사, 평상시 기분 비율, <b>규칙(rules.md)</b>을 Claude Code 기본 프롬프트 <b>뒤에 덧붙여요</b>. 원래 능력은 그대로고 말투만 캐릭터가 돼요.</li>
+      <li><b>규칙과 스킬:</b> 캐릭터마다 스튜디오 "규칙" 탭에서 항상 따를 규칙을, "스킬" 탭에서 필요할 때만 쓰는 스킬(Claude Code 스킬)을 만들 수 있어요. 스킬은 그 캐릭터에만 적용돼요.</li>
+      <li><b>감정 태그:</b> AI는 대답 앞에 <code>[happy]</code> 같은 태그를 붙이고, 펫은 그걸로 표정·움직임을 골라요. 정해진 대사 캐릭터(의성어로만 말하는 캐릭터 등)는 평소엔 그 감정의 소리로 말하고, <b>일을 한 대답이나 물어본 것에 대한 정보 대답</b>(자기소개, 사용법 등)만 글자로 보여줘요.</li>
+      <li><b>진행 상황:</b> 일하는 동안 말풍선 아래에 "💻 명령", "✏️ 파일 고치는 중", "🧩 스킬" 같은 한 줄이 떠요. 우클릭 → "하던 일 멈추기"로 멈출 수 있어요.</li>
+    </ul>
+
+    <h2>기억</h2>
+    <ul>
+      <li><b>대화 기억 = 그 AI 세션의 대화 내역이에요.</b> 캐릭터마다 세션 id를 저장해둬서(<code>~/.deskpet/characters/&lt;캐릭터&gt;/session.json</code>) 앱을 껐다 켜도 이어서 말해요.</li>
+      <li><b>대화 정리:</b> 말할 때마다 지난 대화가 같이 들어가서, 쌓일수록 한 번 말하는 데 드는 양이 커져요. 그래서 대화가 3만 토큰쯤 쌓이면 펫이 조용할 때 알아서 <b>요약 정리</b>(<code>/compact</code>)해요. 나에 대해 알게 된 것, 하던 일, 관계는 요약으로 남아요.</li>
+      <li>캐릭터를 바꾸면 그 캐릭터의 세션으로 바뀌어요. 캐릭터마다 기억이 따로예요.</li>
+      <li>잊고 새로 시작하려면 우클릭 → "○○와(과) 대화 새로 시작".</li>
+      <li><b>Claude Code를 고르면</b> 펫이 켜질 때 그 세션을 미리 띄워두고 말만 주고받아요 (대답 1~3초). 30분 조용하면 닫았다가 다음 말에 다시 이어서 열어요.</li>
+      <li><b>Codex를 고르면</b> 말할 때마다 codex를 켜서 캐릭터의 대화방에 이어 말해요. Codex는 0.1초 안에 켜져서 켜두지 않아도 느려지지 않아요.</li>
+      <li><b>펫 전용 폴더:</b> 펫의 Claude Code 세션은 <code>~/Desktop-pet/&lt;캐릭터&gt;</code> 폴더에서 돌아요. 캐릭터마다 기억·스킬이 따로예요. 그래서 펫이 "기억해줘"로 저장한 기억과 대화 목록이 평소 Claude Code 작업과 섞이지 않아요. 파일은 작업 폴더(기본: 홈 전체)를 열어줘서 평소처럼 다룰 수 있어요.</li>
+      <li>펫을 끈 상태에서 터미널로 <code>cd ~/Desktop-pet/&lt;캐릭터&gt; && claude --resume</code> 하면 펫과 나눈 대화를 Claude Code 화면으로 열어볼 수 있어요. (펫이 켜져 있을 때 같이 쓰면 대화가 꼬일 수 있어요)</li>
+    </ul>
+
+    <h2>권한</h2>
+    <ul>
+      <li><b>Claude Code:</b> 평소 Claude Code 권한 설정(<code>~/.claude/settings.json</code>)을 그대로 따라요. 이미 허용해둔 건 그냥 하고, 그 밖의 것(명령 실행, 파일 수정 등)은 말풍선으로 물어봐요. [해줘 / 하지 마 / 항상 허용 / 이번 일은 다 맡길게]</li>
+      <li><b>항상 허용:</b> 누르면 그 동작(같은 명령, 같은 사이트, 같은 파일, 같은 도구)은 다음부터 안 물어봐요. 펫에게만 적용되고, 설정 탭 아래 "항상 허용한 동작"에서 보고 지울 수 있어요.</li>
+      <li><b>Codex:</b> 실행 중엔 하나하나 물어볼 수 없어서, AI 설정에서 고른 권한(읽기만 / 작업 폴더 안에서 고치기) 안에서만 일해요.</li>
+      <li><b>작업 폴더:</b> 기본은 홈 폴더예요. 우클릭 → 작업 폴더에서 바꿀 수 있어요. 바꿔도 대화 기억은 그대로예요.</li>
+      <li><b>상황 반응(잔소리 등)</b>에선 도구를 못 쓰게 막아둬요. 펫이 혼자 일을 벌이지 않아요.</li>
+    </ul>
+
+    <h2>AI를 쓰는 때 / 안 쓰는 때</h2>
+    <table>
+      <thead><tr><th>AI를 써요 (사용량 듦)</th><th>AI 없이 해요</th></tr></thead>
+      <tbody>
+        <tr><td>내가 말을 걸 때 / 일을 시킬 때</td><td>처음 인사 · 딴짓 잔소리 · 휴식 권유 · 먼저 말 걸기 (스튜디오 반응 탭에 써둔 대사)</td></tr>
+        <tr><td>스튜디오 대화 테스트, 연결 테스트</td><td>앱을 바꿀 때 한마디 · 자리 비움 · 돌아옴</td></tr>
+        <tr><td>반응 탭에서 "AI로 말하기"를 켠 반응만</td><td>평상시 기분 바꾸기 · 돌아다니기 · 감정 미리보기 · 오늘 요약</td></tr>
+      </tbody>
+    </table>
+    <p class="tip">펫이 혼자 하는 반응은 기본으로 AI를 안 써요. 내 Claude Code를 그대로 쓰는 만큼 한 번 부를 때 수만 토큰이 들어서예요. 화면이 잠겨 있거나 자리를 비우면 아무 반응도 안 해요. 세션이 떠 있기만 할 땐 사용량을 안 써요.</p>
+
+    <h2>AI에게 보내는 정보</h2>
+    <ul>
+      <li>지금 쓰는 앱 이름, 앱별 사용 시간, 지금 시각, 내가 입력한 말, 최근 대화.</li>
+      <li>윈도우에선 브라우저 창 제목에서 <b>걸린 키워드만</b>(예: youtube) 보내고, 창 제목 전체는 안 보내요.</li>
+      <li>화면 내용, 키보드 입력은 보내지 않아요. 파일은 일을 부탁했을 때 AI가 직접 읽는 것만 가요.</li>
+    </ul>
+
+    <h2>기록 보기</h2>
+    <ul>
+      <li><b>대화 창:</b> 우클릭 → "대화 창 열기" (또는 긴 말풍선의 "전체 보기"). 최근 대화를 보고 여기서도 말을 걸 수 있어요. 위쪽에 오늘 AI를 몇 번, 얼마나 썼는지 나와요.</li>
+      <li><b>대화 기록:</b> 우클릭 → "대화 기록 보기 (터미널)". 펫이 AI에게 보낸 말과 AI의 원래 대답(감정 태그 포함)이 실시간으로 보여요. 파일: <code>~/.deskpet/chat-log.txt</code></li>
+      <li><b>작업 기록:</b> 우클릭 → "작업 기록 보기". 도구를 써서 한 일만 모아요: 부탁, 승인한 동작, 결과. 파일: <code>~/.deskpet/agent-log.md</code></li>
+    </ul>
+
+    <h2>문제가 생기면</h2>
+    <table>
+      <thead><tr><th>증상</th><th>해결</th></tr></thead>
+      <tbody>
+        <tr><td>"못 찾았어"</td><td>Claude Code나 Codex가 설치돼 있는지 확인. 그래도 안 되면 <code>~/.deskpet/config.json</code>에 <code>claude_path</code> / <code>codex_path</code>로 위치를 적어주세요.</td></tr>
+        <tr><td>"로그인이 풀렸어" / 연결 테스트 실패</td><td>설정 탭의 [로그인하기] → 터미널에서 로그인 → [연결 테스트]. Codex는 로그인이 풀려도 "준비됨"으로 보일 수 있어서 연결 테스트가 정확해요.</td></tr>
+        <tr><td>대답이 느려요</td><td>AI 설정에서 Claude Code 모델을 Haiku로 바꾸면 가장 빨라요 (대신 일은 약해요). 30분 쉬고 첫 말은 세션을 다시 여느라 조금 더 걸려요.</td></tr>
+        <tr><td>예전 일을 기억 못 해요</td><td>캐릭터를 바꾸면 기억도 따로예요. "대화 새로 시작"을 눌렀다면 그 전 기억은 없어요.</td></tr>
+        <tr><td>엉뚱한 감정을 골라요</td><td>스튜디오 → 감정 표현에서 감정별 대사 예시와 평상시 기분 비율을 고치고, 대화 테스트로 확인해보세요.</td></tr>
+      </tbody>
+    </table>
+  </main>
+  <script src="../dist/renderer/setup.js"></script>
+</body>
+</html>
