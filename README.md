@@ -6,12 +6,51 @@
 
 ## 준비물
 
-- [Node.js](https://nodejs.org) 22 이상
-- 아래 중 하나 (설치하고 로그인까지)
-  - [Claude Code](https://docs.claude.com/en/docs/claude-code/overview): 터미널에서 `claude` 실행 → 로그인
-  - [Codex](https://github.com/openai/codex): 터미널에서 `codex login`
+아래 중 하나를 설치하고 로그인까지 해두세요.
 
-## 설치 · 실행
+- [Claude Code](https://docs.claude.com/en/docs/claude-code/overview): 터미널에서 `claude` 실행 → 로그인
+- [Codex](https://github.com/openai/codex): 터미널에서 `codex login`
+
+## 설치
+
+### ⬇️ [윈도우용 다운로드](https://github.com/gakin-dev/deskpet/releases/latest/download/DeskPet-Setup.exe) · [맥용 다운로드 (M1 이상)](https://github.com/gakin-dev/deskpet/releases/latest/download/DeskPet-mac-arm64.zip)
+
+누르면 최신 버전이 바로 받아져요. 바뀐 내용과 예전 버전은 [릴리스 페이지](https://github.com/gakin-dev/deskpet/releases)에 있어요.
+
+| | 받는 파일 | 설치 |
+|---|---|---|
+| 윈도우 | `DeskPet-Setup.exe` | 실행 → 설치할 폴더 고르기 → 시작 메뉴·바탕화면에 DeskPet이 생겨요 |
+| 맥 (M1 이상) | `DeskPet-mac-arm64.zip` | 압축을 풀고 `DeskPet.app`을 응용 프로그램 폴더로 옮기기 |
+
+처음 켜면 **AI 설정 창**이 떠요. Claude Code와 Codex 중 하나를 고르고 [연결 테스트]로 확인한 뒤 [시작하기]를 누르세요.
+
+### 처음 열 때 경고가 뜨면
+
+서명하지 않은 개인용 앱이라 처음 한 번 경고가 떠요.
+
+**윈도우**
+- 브라우저가 "일반적으로 다운로드되지 않는 파일"이라고 막으면: 다운로드 목록에서 `⋯` → **유지** → **자세히 표시** → **그래도 계속**
+- **"Windows의 PC 보호"** 파란 창이 뜨면: **추가 정보** → **실행**
+
+**맥**
+- **"손상되었기 때문에 열 수 없습니다"**가 뜨면: 앱이 망가진 게 아니라 인터넷에서 받은 서명 없는 앱이라 막힌 거예요. 터미널을 열고 아래를 한 번 실행한 뒤 다시 여세요.
+  ```bash
+  xattr -cr /Applications/DeskPet.app
+  ```
+- **"확인되지 않은 개발자"**라고 뜨면: **시스템 설정 → 개인정보 보호 및 보안** 맨 아래에서 **그래도 열기**를 누르세요.
+
+### 업데이트 · 지우기
+
+- **업데이트:** 새 버전 파일을 받아서 그냥 설치하세요 (윈도우는 설치 파일 실행, 맥은 앱 덮어쓰기). 캐릭터와 설정은 그대로 남아요. 먼저 지우고 설치하면 다 사라져요.
+- **윈도우에서 지우기:** 설정 → 앱 → DeskPet 제거. 캐릭터·설정·기록(아래 "내 데이터")까지 전부 지워져요.
+- **맥에서 지우기:** 우클릭 → 종료한 뒤 `DeskPet.app`을 휴지통으로. 캐릭터·설정까지 지우려면 터미널에서:
+  ```bash
+  rm -rf ~/.deskpet ~/Desktop-pet ~/Library/Application\ Support/deskpet ~/.claude/projects/*-Desktop-pet-*
+  ```
+
+## 코드로 직접 실행하기
+
+[Node.js](https://nodejs.org) 22 이상이 필요해요.
 
 ```bash
 git clone https://github.com/gakin-dev/deskpet.git
@@ -20,9 +59,7 @@ npm install
 npm start
 ```
 
-`npm start`로 켜면 그 터미널을 닫을 때 펫도 꺼져요. 계속 쓰려면 앱으로 만들어두세요 (아래 "앱으로 만들기").
-
-처음 켜면 **AI 설정 창**이 떠요. Claude Code와 Codex 중 하나를 고르고 [연결 테스트]로 확인한 뒤 [시작하기]를 누르세요.
+`npm start`로 켜면 그 터미널을 닫을 때 펫도 꺼져요.
 
 ## 쓰는 법
 
@@ -70,11 +107,16 @@ npm run dist
 | | 맥 | 윈도우 |
 |---|---|---|
 | 명령 (직접 고르기) | `npm run dist:mac` | `npm run dist:win` |
-| 생기는 것 | `out/mac-arm64/DeskPet.app` | `out/DeskPet Setup 0.2.0.exe` (설치 파일)<br>`out/win-unpacked/DeskPet.exe` (설치 없이 바로 실행) |
-| 설치 | `DeskPet.app`을 응용 프로그램 폴더로 옮기기 | 설치 파일 실행 → 설치할 폴더 고르기 → 시작 메뉴·바탕화면에 DeskPet이 생겨요 |
-| 처음 열 때 경고가 뜨면 | 앱 우클릭 → 열기 | "Windows의 PC 보호" 창에서 추가 정보 → 실행 |
+| 생기는 것 | `out/mac-arm64/DeskPet.app`<br>`out/DeskPet-mac-arm64.zip` | `out/DeskPet-Setup.exe` (설치 파일)<br>`out/win-unpacked/DeskPet.exe` (설치 없이 바로 실행) |
 
-직접 만든 앱이라 서명이 없어서 처음 한 번 경고가 떠요. 앱으로 켜도 Claude Code나 Codex는 컴퓨터에 설치돼 있고 로그인돼 있어야 해요.
+### 릴리스 올리기
+
+`package.json`의 `version`을 올리고 커밋·푸시한 뒤, 같은 버전의 태그를 푸시하면 GitHub Actions가 윈도우·맥 앱을 만들어서 [릴리스](https://github.com/gakin-dev/deskpet/releases)에 올려요 (10분쯤 걸려요).
+
+```bash
+git tag v0.3.0
+git push origin v0.3.0
+```
 
 ## 내 데이터
 

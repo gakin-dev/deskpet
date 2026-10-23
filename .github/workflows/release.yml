@@ -29,7 +29,7 @@ jobs:
           node-version: 22
           cache: npm
 
-      # 태그와 package.json 버전이 다르면 멈춤 (파일 이름이 package.json 버전으로 나와서)
+      # 태그와 package.json 버전이 다르면 멈춤 (앱 안의 버전이 package.json 버전이라)
       - name: 버전 확인
         shell: bash
         run: |

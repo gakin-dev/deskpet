@@ -31,6 +31,7 @@
     ],
     "mac": {
       "target": "zip",
+      "artifactName": "DeskPet-mac-arm64.${ext}",
       "category": "public.app-category.entertainment",
       "identity": null,
       "extendInfo": {
@@ -44,6 +45,7 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "shortcutName": "DeskPet",
+      "artifactName": "DeskPet-Setup.${ext}",
       "deleteAppDataOnUninstall": true
     }
   }
