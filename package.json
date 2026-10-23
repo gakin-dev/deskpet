@@ -8,7 +8,9 @@
     "build": "tsc -p .",
     "start": "npm run build && electron .",
     "typecheck": "tsc -p . --noEmit",
-    "dist": "npm run build && electron-builder --mac dir"
+    "dist": "npm run build && electron-builder",
+    "dist:mac": "npm run build && electron-builder --mac",
+    "dist:win": "npm run build && electron-builder --win"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",
@@ -37,6 +39,11 @@
     },
     "win": {
       "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "shortcutName": "DeskPet"
     }
   }
 }

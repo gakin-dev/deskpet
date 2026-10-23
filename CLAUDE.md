@@ -15,7 +15,7 @@ npm run typecheck  # 타입 검사만
 - Node 22 이상. Windows에서도 똑같이 `npm install && npm start`
 - Claude Code가 설치돼 있고 로그인돼 있어야 AI가 켜짐 (없으면 미리 써둔 대사로만 동작)
 - 종료: 캐릭터 우클릭 → "잘 있어~ (종료)"
-- 맥 앱 만들기: `npm run dist` → `out/mac-arm64/DeskPet.app` (electron-builder, 서명 없음, 개인용). 설정은 `package.json`의 `build`. 윈도우 .exe는 아직 안 만들어봄
+- 앱 만들기: `npm run dist` (지금 OS용), `npm run dist:mac` → `out/mac-arm64/DeskPet.app`, `npm run dist:win` → `out/DeskPet Setup <버전>.exe` (NSIS 설치 파일, 설치 폴더 고르기) + `out/win-unpacked/DeskPet.exe`. electron-builder, 서명 없음, 개인용. 설정은 `package.json`의 `build`. 맥 앱은 맥에서, 윈도우 앱은 윈도우에서 빌드
 
 ## 파일 구조
 
