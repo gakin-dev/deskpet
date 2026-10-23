@@ -281,6 +281,10 @@ interface StudioBridge {
   /** 바탕화면 펫이 이 감정과 대사를 보여준다 */
   showOnPet(mood: Mood, line: string): void;
   openFolder(id: string): void;
+  /** 캐릭터를 .deskpet 파일로 저장한다 (저장 위치를 고르는 창). 취소하면 null, 저장하면 파일 경로 */
+  exportCharacter(id: string): Promise<string | null>;
+  /** .deskpet 파일을 골라서 캐릭터를 추가한다. 취소하면 null, 추가하면 새 캐릭터 id */
+  importCharacter(): Promise<string | null>;
 }
 
 // MARK: - AI 설정 창 (처음 켤 때)

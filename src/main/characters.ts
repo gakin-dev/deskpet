@@ -344,6 +344,65 @@ export class Characters {
     return this.ensure(id, name, templatePersonality(name));
   }
 
+  // MARK: - 내보내기 · 가져오기 (.deskpet 파일 — 맥·윈도우 둘 다 되게 zip 대신 JSON 하나에 파일들을 담음)
+
+  /**
+   * 캐릭터를 파일 하나로. 설정·성격·규칙·이미지·캐릭터 전용 스킬을 담고, 대화 기억(session.json)은 뺀다.
+   * 형식: { format: "deskpet-character", version: 1, name, files: { "character.json": base64, "skin/happy.png": base64, "skills/<이름>/SKILL.md": base64 … } }
+   */
+  exportCharacter(c: Character): string {
+    const files: Record<string, string> = {};
+    const add = (rel: string, abs: string) => {
+      try { files[rel] = fs.readFileSync(abs).toString("base64"); } catch { /* 없는 파일은 건너뜀 */ }
+    };
+    for (const f of ["character.json", "personality.txt", "rules.md", "lines.json"]) add(f, path.join(c.dir, f));
+    let skin: string[] = [];
+    try { skin = fs.readdirSync(c.skinDir); } catch { /* 이미지 없음 */ }
+    for (const f of skin) if (imageExts.includes(path.extname(f).toLowerCase())) add(`skin/${f}`, path.join(c.skinDir, f));
+    for (const k of this.listSkills(c)) add(`skills/${k.name}/SKILL.md`, path.join(this.skillsDir(c), k.name, "SKILL.md"));
+    return JSON.stringify({ format: "deskpet-character", version: 1, name: this.loadProfile(c).name, files });
+  }
+
+  /** .deskpet 파일 내용으로 새 캐릭터를 만든다 (id는 겹치지 않게 새로). 허용된 파일만 받는다 */
+  importCharacter(text: string): Character {
+    let data: { format?: unknown; files?: unknown };
+    try { data = JSON.parse(text); } catch { throw new Error("DeskPet 캐릭터 파일이 아니야"); }
+    if (data.format !== "deskpet-character" || !data.files || typeof data.files !== "object") throw new Error("DeskPet 캐릭터 파일이 아니야");
+    const files = data.files as Record<string, unknown>;
+    if (typeof files["character.json"] !== "string") throw new Error("캐릭터 설정(character.json)이 없어");
+
+    const id = this.nextId();
+    const dir = path.join(this.root, id);
+    const home = path.join(os.homedir(), "Desktop-pet", id);
+    let total = 0;
+    // 들어갈 수 있는 파일만: 설정 파일, skin/<이미지>, skills/<이름>/SKILL.md (경로를 벗어나는 이름은 거절)
+    const target = (rel: string): string | null => {
+      if (["character.json", "personality.txt", "rules.md", "lines.json"].includes(rel)) return path.join(dir, rel);
+      let m = rel.match(/^skin\/([\w.-]+)$/);
+      if (m && imageExts.includes(path.extname(m[1]).toLowerCase()) && !m[1].startsWith(".")) return path.join(dir, "skin", m[1]);
+      m = rel.match(/^skills\/([a-z0-9][a-z0-9-]{0,40})\/SKILL\.md$/);
+      if (m) return path.join(home, ".claude", "skills", m[1], "SKILL.md");
+      return null;
+    };
+    const writes: [string, Buffer][] = [];
+    for (const [rel, b64] of Object.entries(files)) {
+      const to = target(rel);
+      if (!to || typeof b64 !== "string") continue;
+      const buf = Buffer.from(b64, "base64");
+      total += buf.byteLength;
+      if (buf.byteLength > 15 * 1024 * 1024 || total > 150 * 1024 * 1024) throw new Error("파일이 너무 커");
+      writes.push([to, buf]);
+    }
+    for (const [to, buf] of writes) {
+      fs.mkdirSync(path.dirname(to), { recursive: true });
+      fs.writeFileSync(to, buf);
+    }
+    // 설정이 깨져 있어도 열리게 한 번 정리해서 다시 저장
+    const c = this.describe(id, id);
+    this.saveProfile(c, this.loadProfile(c));
+    return this.get(id);
+  }
+
   /** 캐릭터 폴더를 통째로 복사한다 */
   duplicate(c: Character): Character {
     const id = this.nextId();

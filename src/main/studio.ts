@@ -279,5 +279,30 @@ function register(): void {
     deps.showOnPet(mood as Mood, typeof line === "string" ? line.slice(0, 200) : "");
   });
 
+  ipcMain.handle("studio:export", async (_e, id: unknown) => {
+    const c = find(id);
+    const name = ch().loadProfile(c).name.replace(/[\\/:*?"<>|]/g, "_");
+    const r = await dialog.showSaveDialog(win!, {
+      title: "캐릭터 내보내기",
+      defaultPath: path.join(app.getPath("desktop"), `${name}.deskpet`),
+      filters: [{ name: "DeskPet 캐릭터", extensions: ["deskpet"] }],
+    });
+    if (r.canceled || !r.filePath) return null;
+    fs.writeFileSync(r.filePath, ch().exportCharacter(c));
+    return r.filePath;
+  });
+
+  ipcMain.handle("studio:import", async () => {
+    const r = await dialog.showOpenDialog(win!, {
+      title: "캐릭터 가져오기",
+      properties: ["openFile"],
+      filters: [{ name: "DeskPet 캐릭터", extensions: ["deskpet"] }],
+    });
+    const file = r.filePaths[0];
+    if (r.canceled || !file) return null;
+    if (fs.statSync(file).size > 200 * 1024 * 1024) throw new Error("파일이 너무 커");
+    return ch().importCharacter(fs.readFileSync(file, "utf8")).id;
+  });
+
   ipcMain.on("studio:open-folder", (_e, id: unknown) => { void shell.openPath(find(id).dir); });
 }

@@ -211,6 +211,14 @@ h3 { margin: 0 0 4px; font-size: 13.5px; font-weight: 700; }
 .char-sub { font-size: 11.5px; color: var(--text-3); }
 .char-sub.on { color: var(--accent-text); font-weight: 600; }
 
+.side-share {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 10px 10px 0;
+  border-top: 1px solid var(--border);
+}
+.side-share + .side-foot { border-top: none; }
 .side-foot {
   display: flex;
   justify-content: space-between;

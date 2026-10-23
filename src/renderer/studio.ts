@@ -1307,6 +1307,24 @@
       if (next) await select(next.id);
     });
     $("folder-btn").addEventListener("click", () => { if (cur) studio.openFolder(cur.id); });
+    $("export-btn").addEventListener("click", async () => {
+      if (!cur) return;
+      await flush();
+      try {
+        const file = await studio.exportCharacter(cur.id);
+        if (file) toast(`${file.split(/[\\/]/).pop()}로 저장했어요. 대화 기억은 빼고 담았어요`);
+      } catch (e) { toast(errText(e)); }
+    });
+    $("import-btn").addEventListener("click", async () => {
+      await flush();
+      try {
+        const id = await studio.importCharacter();
+        if (!id) return;
+        await refreshList();
+        await select(id);
+        toast("캐릭터를 가져왔어요. 펫으로 쓰려면 위의 \"이 캐릭터를 펫으로 쓰기\"를 누르세요");
+      } catch (e) { toast(errText(e)); }
+    });
 
     document.addEventListener("keydown", (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "s") {

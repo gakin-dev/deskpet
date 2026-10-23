@@ -24,6 +24,8 @@ const bridge: StudioBridge = {
   testChat: (profile, personality, rules, text, history) => ipcRenderer.invoke("studio:test-chat", profile, personality, rules, text, history),
   showOnPet: (mood, line) => ipcRenderer.send("studio:show-on-pet", mood, line),
   openFolder: (id) => ipcRenderer.send("studio:open-folder", id),
+  exportCharacter: (id) => ipcRenderer.invoke("studio:export", id),
+  importCharacter: () => ipcRenderer.invoke("studio:import"),
 };
 
 contextBridge.exposeInMainWorld("studio", bridge);
