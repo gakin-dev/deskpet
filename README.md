@@ -1,6 +1,7 @@
 # DeskPet
 
-> 📮 문의사항이 있으면 [tmdgus9446@gmail.com](mailto:tmdgus9446@gmail.com)으로 메일 주세요.
+> [!NOTE]
+> 📮 문의사항이 있으면 **[tmdgus9446@gmail.com](mailto:tmdgus9446@gmail.com)** 으로 메일 주세요.
 
 화면 구석에 사는 데스크톱 펫이에요. 지금 쓰는 앱을 보고 캐릭터 성격대로 반응하고, 말을 걸면 대답하고, 부탁하면 컴퓨터에서 일도 해요.
 
