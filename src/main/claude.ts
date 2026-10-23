@@ -173,6 +173,12 @@ export class ClaudeSession {
       if (ev.type !== "result") return;
       const w = this.waiting;
       this.waiting = null;
+      // 시작도 못 하고 끝난 오류(예: 이어갈 세션이 없음 "No conversation found")는 꺼진 것과 같이 실패로 넘긴다
+      // — claude가 꺼지기 전에 result로 먼저 알려줘서, 이걸 대답으로 받으면 새 세션으로 다시 여는 처리가 안 걸림
+      if (ev.is_error && ev.num_turns === 0 && Array.isArray(ev.errors) && ev.errors.length) {
+        w.reject(new Error(String(ev.errors[0])));
+        return;
+      }
       w.resolve(toResult(ev));
     });
     const die = (why: string) => {

@@ -9,13 +9,14 @@ import path from "node:path";
  * 펫을 터미널(Orca, Claude Code 세션 등)에서 켜면 그 터미널의 세션 변수가 따라와서
  * 펫이 부르는 claude·codex가 그 터미널의 작업으로 잡힌다. 그런 변수는 빼고 넘긴다.
  * Orca가 넣은 CODEX_HOME(Orca 전용 Codex 폴더)도 빼서 사용자의 ~/.codex 로그인을 쓰게 한다.
+ * 윈도우는 PATH가 "Path"로 들어와서, 복사한 객체에서 env.PATH로 읽히도록 이름을 PATH로 맞춘다.
  */
 export function cleanEnv(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
   const out: NodeJS.ProcessEnv = {};
   for (const [k, v] of Object.entries(env)) {
     if (/^(ORCA_|CLAUDE_CODE_|CLAUDECODE$|CLAUDE_PID$|CLAUDE_EFFORT$|AI_AGENT$)/.test(k)) continue;
     if (k === "CODEX_HOME" && env.ORCA_CODEX_HOME && v === env.ORCA_CODEX_HOME) continue;
-    out[k] = v;
+    out[k.toUpperCase() === "PATH" ? "PATH" : k] = v;
   }
   return out;
 }
