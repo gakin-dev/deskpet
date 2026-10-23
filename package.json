@@ -30,7 +30,7 @@
       "package.json"
     ],
     "mac": {
-      "target": "dir",
+      "target": "zip",
       "category": "public.app-category.entertainment",
       "identity": null,
       "extendInfo": {

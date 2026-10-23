@@ -1,0 +1,50 @@
+# 태그(v0.2.0 등)를 푸시하면 윈도우 설치 파일과 맥 앱을 빌드해서 GitHub 릴리스에 올린다
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            script: dist:win
+            files: out/*.exe
+          - os: macos-latest
+            script: dist:mac
+            files: out/*.zip
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # 태그와 package.json 버전이 다르면 멈춤 (파일 이름이 package.json 버전으로 나와서)
+      - name: 버전 확인
+        shell: bash
+        run: |
+          want="v$(node -p "require('./package.json').version")"
+          if [ "$GITHUB_REF_NAME" != "$want" ]; then
+            echo "태그 $GITHUB_REF_NAME 와 package.json 버전 $want 이 달라요"; exit 1
+          fi
+
+      - run: npm ci
+
+      - name: 빌드
+        run: npm run ${{ matrix.script }} -- --publish never
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ matrix.files }}

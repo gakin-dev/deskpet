@@ -15,7 +15,8 @@ npm run typecheck  # 타입 검사만
 - Node 22 이상. Windows에서도 똑같이 `npm install && npm start`
 - Claude Code가 설치돼 있고 로그인돼 있어야 AI가 켜짐 (없으면 미리 써둔 대사로만 동작)
 - 종료: 캐릭터 우클릭 → "잘 있어~ (종료)"
-- 앱 만들기: `npm run dist` (지금 OS용), `npm run dist:mac` → `out/mac-arm64/DeskPet.app`, `npm run dist:win` → `out/DeskPet Setup <버전>.exe` (NSIS 설치 파일, 설치 폴더 고르기) + `out/win-unpacked/DeskPet.exe`. electron-builder, 서명 없음, 개인용. 설정은 `package.json`의 `build`. 맥 앱은 맥에서, 윈도우 앱은 윈도우에서 빌드
+- 릴리스: `package.json`의 `version`을 올리고 커밋한 뒤 같은 태그(`v0.3.0` 등)를 푸시하면 GitHub Actions(`.github/workflows/release.yml`)가 윈도우 설치 파일과 맥 앱 zip을 빌드해서 GitHub 릴리스에 올림. 태그와 버전이 다르면 멈춤
+- 앱 만들기: `npm run dist` (지금 OS용), `npm run dist:mac` → `out/mac-arm64/DeskPet.app` + `out/DeskPet-<버전>-arm64-mac.zip`, `npm run dist:win` → `out/DeskPet Setup <버전>.exe` (NSIS 설치 파일, 설치 폴더 고르기) + `out/win-unpacked/DeskPet.exe`. electron-builder, 서명 없음, 개인용. 설정은 `package.json`의 `build`. 맥 앱은 맥에서, 윈도우 앱은 윈도우에서 빌드
 - 윈도우 제거 = 사용자 데이터까지 전부 지움: `~/.deskpet`, `~/Desktop-pet`, `AppData\Roaming\deskpet`(`deleteAppDataOnUninstall`), `AppData\Local\deskpet-updater`, `~/.claude/projects/*-Desktop-pet-*`(펫 세션의 Claude Code 기록). `build/installer.nsh`의 `customUnInstall`. 새 버전 설치가 옛 버전을 지울 때(`isUpdated`)는 안 지움
 
 ## 파일 구조
