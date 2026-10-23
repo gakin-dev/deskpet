@@ -140,7 +140,7 @@ npm run typecheck  # 타입 검사만
   - "항상 허용" 범위: 터미널 명령은 그 명령 그대로, 웹 접속은 그 사이트, 파일 읽기·수정은 그 파일, 그 밖의 도구(스킬, MCP 등)는 그 도구 전체. AI 설정 창에서 보고 지움. 사용자의 Claude Code 설정은 안 건드림
   - `--system-prompt-snapshot off`: 기본(on)은 처음 프롬프트를 저장해두고 이어할 때도 그걸 써서 캐릭터 프롬프트 변경이 안 먹음. off + 다음 말에 "[캐릭터 설정이 바뀌었어]" 안내로 바꾼 성격이 반영됨 (확인함)
   - 세션은 항상 **캐릭터 폴더 `~/Desktop-pet/<캐릭터 id>`에서** 연다 (`Brain.petHome` = `Character.home`): Claude Code는 대화 목록·자동 기억·프로젝트 스킬을 폴더별로 저장해서, 홈에서 돌면 사용자의 평소 홈 작업과 섞임. 캐릭터 폴더라 캐릭터마다 기억·스킬이 따로. 작업 폴더를 바꿔도 같은 세션을 이어가려면 cwd가 같아야 해서 고정. 작업 폴더(기본 홈)는 항상 `--add-dir`로 염. `session.json`의 `home`이 지금 폴더와 다르면(예전 버전에서 만든 세션) 새 세션으로 시작
-  - 세션 id는 캐릭터마다 `session.json`에 저장 → 앱을 켜면 `--resume`으로 이어서 열고(미리 띄워둠), 대화가 길어지면 Claude Code가 알아서 압축. 저장된 세션을 못 열면 새 세션으로 한 번 더
+  - 세션 id는 캐릭터마다 `session.json`에 저장 → 앱을 켜면 `--resume`으로 이어서 열고(미리 띄워둠), 대화가 길어지면 Claude Code가 알아서 압축. 저장된 세션을 못 열면 새 세션으로 한 번 더 (claude가 "No conversation found"를 꺼지기 전에 `result`로 먼저 보내서, `ClaudeSession`이 시작도 못 한 오류 result(`num_turns: 0` + `errors`)를 실패로 바꿔야 이 재시도가 걸림. 말 한마디 없이 세션을 다시 열면 대화 파일이 안 생겨서 저장된 id가 이렇게 됨)
   - **대화 정리(압축)**: 매 대답의 `usage`로 맥락 크기를 재서, 기본 크기(대화 없이 들어가는 크기 — Claude Code 기본 프롬프트·도구·스킬 설명만으로 2만 토큰대. 지금까지 본 가장 작은 값을 캐릭터마다 `session.json`의 `baseContext`에 저장)보다 3만 토큰(`config.compact_after_tokens`로 바꿈) 넘게 쌓이면 15초 조용할 때 `/compact <요약 지침>`을 세션에 보냄. 사용자 정보·진행 중인 일·관계 위주로 요약해서 기억은 남고 다음 대답부터 짧아짐 (확인: 61k → 22k 토큰, 정리 뒤에도 기억함). 정리 중엔 바쁨 상태
   - "기억해줘"라고 하면 Claude Code 자동 기억에 저장함 (펫 폴더 전용이라 평소 작업과 안 섞임)
   - 30분 조용하면 프로세스만 닫고 다음 말에 `--resume`으로 다시 엶. 성격·말투가 바뀌면(스튜디오 저장, 프롬프트 내용이 다를 때만) 다시 띄움
@@ -166,7 +166,7 @@ npm run typecheck  # 타입 검사만
 
 ## Claude Code 연결 공통 (claude.ts)
 
-- 앱을 Finder에서 켜도 claude를 찾도록 로그인 셸의 PATH를 빌려옴. 윈도우는 `claude.exe`/`claude.cmd`를 PATH에서 찾음 (`.cmd`면 셸을 거쳐 실행)
+- 앱을 Finder에서 켜도 claude를 찾도록 로그인 셸의 PATH를 빌려옴. 윈도우는 `claude.exe`/`claude.cmd`를 PATH에서 찾음 (`.cmd`면 셸을 거쳐 실행). 윈도우 환경 변수 이름은 `Path`라서 `cleanEnv`가 `PATH`로 맞춤 (안 맞추면 복사한 객체에서 `env.PATH`가 비어서 claude를 못 찾음)
 - 긴 텍스트는 인자 대신 stdin이나 파일로 넘김 (윈도우 셸 따옴표 문제 피하기)
 - 로그인 안 돼 있으면 결과에 "Not logged in"이 와서 `/login` 안내로 바꿔 말함
 - 사용량은 각 사용자의 Claude Code 구독 / ChatGPT 계정 한도에서 빠짐. 앱은 로그인을 직접 다루지 않고, 각자 설치·로그인한 CLI를 부르기만 함. 각 서비스 약관에 따라 개인적으로 쓰는 도구 (README에도 안내)
