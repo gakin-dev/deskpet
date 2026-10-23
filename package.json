@@ -43,7 +43,8 @@
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "shortcutName": "DeskPet"
+      "shortcutName": "DeskPet",
+      "deleteAppDataOnUninstall": true
     }
   }
 }
