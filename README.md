@@ -14,7 +14,7 @@
 ## 설치 · 실행
 
 ```bash
-git clone https://github.com/<아이디>/deskpet.git
+git clone https://github.com/gakin-dev/deskpet.git
 cd deskpet
 npm install
 npm start
